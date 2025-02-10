@@ -13,6 +13,5 @@ export class Route implements routeType {
     this.route.delete("/deleteChat/:chatId", useRoute.deleteChat);
     this.route.post("/addMensagem", useRoute.addMessage);
     this.route.put("/atualizaChat/:chatId", useRoute.updateChat);
-    this.route.get("/atualizaChats", useRoute.updateAllChats);
   }
 }

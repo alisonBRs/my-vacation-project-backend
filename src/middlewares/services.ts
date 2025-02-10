@@ -58,16 +58,6 @@ class UseService {
 
     console.log(updatedChat);
   }
-
-  public async updateAllChats({
-    chatsIds,
-    data,
-  }: {
-    chatsIds: string[];
-    data: { name?: string; openned?: boolean };
-  }) {
-    await prisma.chats.updateMany({ where: { id: { in: chatsIds } }, data });
-  }
 }
 
 export const useService = new UseService();

@@ -60,21 +60,4 @@ export class useRoutes {
       res.status(400).send(error);
     }
   }
-  public async updateAllChats(req: Request, res: Response) {
-    try {
-      const { name, openned, allChatsIds } = req.body;
-
-      const data = {
-        ...(name ? { name } : {}),
-        ...(openned ? { openned } : {}),
-      };
-
-      await useService.updateAllChats({ chatsIds: allChatsIds, data });
-
-      res.send();
-    } catch (error) {
-      console.log(error);
-      res.status(400).send(error);
-    }
-  }
 }
