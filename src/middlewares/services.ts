@@ -28,6 +28,8 @@ class UseService {
       throw new Error("chat not found");
     }
 
+    global.io.emit("receiveMessage", data);
+
     await prisma.message.create({
       data,
     });

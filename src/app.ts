@@ -14,7 +14,7 @@ export class App {
   public server = http.createServer(this.app);
   public io = new Server(this.server, {
     cors: {
-      origin: "https://example.com",
+      origin: "*",
       methods: ["GET", "POST"],
       allowedHeaders: ["my-custom-header"],
       credentials: true,
@@ -23,6 +23,7 @@ export class App {
   constructor({ path, route }: routeType) {
     this.middlewares();
     this.route({ path, route });
+    global.io = this.io;
   }
   private route({ path, route }: routeType) {
     this.app.use(path, route);
@@ -38,8 +39,6 @@ export class App {
 
       socket.on("sendMessage", (message) => {
         console.log("Mensagem recebida:", message);
-
-        this.io.emit("receiveMessage", message);
       });
 
       socket.on("disconnect", () => {
@@ -48,9 +47,6 @@ export class App {
     });
   }
   public listenner({ port, message }: listennerType) {
-    this.app.listen(port, () => console.log(message));
-    this.server.listen(3030, () => {
-      console.log(`Servidor rodando na porta ${3030}`);
-    });
+    this.server.listen(port, () => console.log(message));
   }
 }
