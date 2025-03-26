@@ -3,9 +3,8 @@ services:
   postgres:
     image: bitnami/postgresql:latest
     ports:
-      - "5000:5432"
+      - 3030:5432
     environment:
-      - "POSTGRESQL_PASSWORD=root"
       - POSTGRESQL_USERNAME=alison
       - POSTGRESQL_PASSWORD=alison123
       - POSTGRESQL_DATABASE=chats
