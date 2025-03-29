@@ -2,6 +2,24 @@ import { PrismaClient } from "@prisma/client";
 import { messageType } from "../interfaces/message-type";
 const prisma = new PrismaClient();
 class UseService {
+  public async createUser({
+    email,
+    password,
+    name,
+  }: {
+    email: string;
+    password: string;
+    name: string;
+  }) {
+    return await prisma.user.create({
+      data: {
+        email,
+        password,
+        name,
+      },
+    });
+  }
+
   public async createChat() {
     return await prisma.chats.create({
       data: {

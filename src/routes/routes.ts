@@ -9,6 +9,7 @@ export class Route implements routeType {
 
   constructor() {
     this.route.get("/", useRoute.getAllChats);
+    this.route.post("/createUser", useRoute.createUser);
     this.route.post("/criaChat", useRoute.createMessage);
     this.route.delete("/deleteChat/:chatId", useRoute.deleteChat);
     this.route.post("/addMensagem", useRoute.addMessage);

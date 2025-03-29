@@ -1,7 +1,25 @@
 import { Request, Response } from "express";
 import { useService } from "./services";
+import bcrypt from "bcrypt";
 
 export class useRoutes {
+  public async createUser(req: Request, res: Response) {
+    try {
+      const { email, password, name } = req.body;
+
+      const cryptoPassword = await bcrypt.hash(password, 10);
+
+      await useService.createUser({ email, password: cryptoPassword, name });
+
+      res.send("Usuário criado com sucesso!");
+    } catch (e) {
+      console.log(e);
+      res
+        .status(401)
+        .send({ customMessage: "Erro ao criar usuário", message: e });
+    }
+  }
+
   public async getAllChats(req: Request, res: Response) {
     try {
       const result = await useService.getAllChats();
