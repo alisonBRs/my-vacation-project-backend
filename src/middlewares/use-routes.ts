@@ -11,12 +11,16 @@ export class useRoutes {
 
       await useService.createUser({ email, password: cryptoPassword, name });
 
-      res.send("Usuário criado com sucesso!");
+      res.send({ message: "Usuário criado com sucesso!", error: false });
     } catch (e) {
       console.log(e);
       res
         .status(401)
-        .send({ customMessage: "Erro ao criar usuário", message: e });
+        .send({
+          customMessage: "Erro ao criar usuário",
+          message: e,
+          error: true,
+        });
     }
   }
 
