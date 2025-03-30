@@ -11,6 +11,16 @@ class UseService {
     password: string;
     name: string;
   }) {
+    const alreadyExistEmail = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (alreadyExistEmail) {
+      throw new Error("Email already exists.");
+    }
+
     return await prisma.user.create({
       data: {
         email,

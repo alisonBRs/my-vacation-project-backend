@@ -14,13 +14,11 @@ export class useRoutes {
       res.send({ message: "Usuário criado com sucesso!", error: false });
     } catch (e) {
       console.log(e);
-      res
-        .status(401)
-        .send({
-          customMessage: "Erro ao criar usuário",
-          message: e,
-          error: true,
-        });
+      res.status(502).send({
+        customMessage: "Erro ao criar usuário",
+        message: e.toString(),
+        error: true,
+      });
     }
   }
 
