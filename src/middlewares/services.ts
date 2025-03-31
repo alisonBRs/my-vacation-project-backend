@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { messageType } from "../interfaces/message-type";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 class UseService {
   public async createUser({
@@ -21,13 +23,61 @@ class UseService {
       throw new Error("Email already exists.");
     }
 
+    const cryptoPassword = await bcrypt.hash(password, 10);
+
     return await prisma.user.create({
       data: {
         email,
-        password,
+        password: cryptoPassword,
         name,
       },
     });
+  }
+
+  public async login({ email, password }: { email: string; password: string }) {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const verifyPassword = await bcrypt.compare(password, user.password);
+
+    if (!verifyPassword) {
+      throw new Error("User not found.");
+    }
+
+    const { password: _, ...userData } = user;
+
+    const token = jwt.sign({ id: userData.id }, process.env.SECRET_KEY ?? "", {
+      expiresIn: "1h",
+    });
+
+    return { ...userData, token };
+  }
+
+  public async getProfile({
+    userId,
+    token,
+  }: {
+    userId: string;
+    token: string;
+  }) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const jwtVerify = jwt.verify(token, process.env.SECRET_KEY ?? "");
+
+    if (!jwtVerify) {
+      throw new Error("User not authorized.");
+    }
+
+    const { password, ...userData } = user;
+
+    return userData;
   }
 
   public async createChat() {

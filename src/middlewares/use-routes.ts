@@ -7,9 +7,7 @@ export class useRoutes {
     try {
       const { email, password, name } = req.body;
 
-      const cryptoPassword = await bcrypt.hash(password, 10);
-
-      await useService.createUser({ email, password: cryptoPassword, name });
+      await useService.createUser({ email, password, name });
 
       res.send({ message: "Usuário criado com sucesso!", error: false });
     } catch (e) {
@@ -18,6 +16,40 @@ export class useRoutes {
         customMessage: "Erro ao criar usuário",
         message: e.toString(),
         error: true,
+      });
+    }
+  }
+
+  public async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const user = await useService.login({ email, password });
+      res.send(user);
+    } catch (e) {
+      console.log(e);
+      res.status(401).send({
+        error: true,
+        message: e.toString(),
+        customMessage: "Usuário não encontrado.",
+      });
+    }
+  }
+
+  public async getProfile(req: Request, res: Response) {
+    try {
+      const { authorization } = req.headers;
+      const { userId } = req.params;
+      const token = authorization?.split("-")[1];
+
+      const user = await useService.getProfile({ token: token ?? "", userId });
+
+      res.send(user);
+    } catch (e) {
+      console.log(e);
+      res.status(401).send({
+        error: true,
+        message: e.toString(),
+        customMessage: "Usuário não autorizado.",
       });
     }
   }
