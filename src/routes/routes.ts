@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { routeType } from "../interfaces/route-type";
 import { useRoutes } from "../middlewares/use-routes";
+import { auth } from "../middlewares/auth";
 
 const useRoute = new useRoutes();
 export class Route implements routeType {
@@ -8,13 +9,13 @@ export class Route implements routeType {
   route = Router();
 
   constructor() {
-    this.route.get("/", useRoute.getAllChats);
-    this.route.get("/getProfile/:userId", useRoute.getProfile);
+    this.route.get("/", auth, useRoute.getAllChats);
+    this.route.get("/getProfile", auth, useRoute.getProfile);
     this.route.post("/createUser", useRoute.createUser);
     this.route.post("/login", useRoute.login);
-    this.route.post("/criaChat", useRoute.createMessage);
+    this.route.post("/criaChat", auth, useRoute.createMessage);
     this.route.delete("/deleteChat/:chatId", useRoute.deleteChat);
-    this.route.post("/addMensagem", useRoute.addMessage);
+    this.route.post("/addMensagem", auth, useRoute.addMessage);
     this.route.put("/atualizaChat/:chatId", useRoute.updateChat);
   }
 }

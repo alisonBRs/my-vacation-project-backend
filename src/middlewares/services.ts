@@ -56,23 +56,14 @@ class UseService {
     return { ...userData, token };
   }
 
-  public async getProfile({
-    userId,
-    token,
-  }: {
-    userId: string;
-    token: string;
-  }) {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+  public async getProfile({ userId }: { userId: string }) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { chats: true, messages: true },
+    });
 
     if (!user) {
       throw new Error("User not found.");
-    }
-
-    const jwtVerify = jwt.verify(token, process.env.SECRET_KEY ?? "");
-
-    if (!jwtVerify) {
-      throw new Error("User not authorized.");
     }
 
     const { password, ...userData } = user;
@@ -80,16 +71,21 @@ class UseService {
     return userData;
   }
 
-  public async createChat() {
-    return await prisma.chats.create({
+  public async createChat(userId: string) {
+    const data = await prisma.chats.create({
       data: {
         openned: false,
+        userId,
       },
+      include: { message: true },
     });
+
+    return data;
   }
-  public async getAllChats() {
+  public async getAllChats(userId: string) {
     const result = await prisma.chats.findMany({
       include: { message: true },
+      where: { userId },
     });
 
     return result;
@@ -105,12 +101,12 @@ class UseService {
     if (!chat) {
       throw new Error("chat not found");
     }
-
-    global.io.emit("receiveMessage", data);
-
+    console.log("data", data);
     await prisma.message.create({
       data,
     });
+
+    global.io.emit("receiveMessage", data);
 
     return {
       ...chat,

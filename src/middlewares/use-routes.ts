@@ -37,11 +37,9 @@ export class useRoutes {
 
   public async getProfile(req: Request, res: Response) {
     try {
-      const { authorization } = req.headers;
-      const { userId } = req.params;
-      const token = authorization?.split("-")[1];
+      const { userId } = req.body;
 
-      const user = await useService.getProfile({ token: token ?? "", userId });
+      const user = await useService.getProfile({ userId });
 
       res.send(user);
     } catch (e) {
@@ -56,7 +54,8 @@ export class useRoutes {
 
   public async getAllChats(req: Request, res: Response) {
     try {
-      const result = await useService.getAllChats();
+      const { userId } = req.body;
+      const result = await useService.getAllChats(userId);
       res.send(result);
     } catch (error) {
       console.log(error);
@@ -65,7 +64,8 @@ export class useRoutes {
 
   public async createMessage(req: Request, res: Response) {
     try {
-      const result = await useService.createChat();
+      const { userId } = req.body;
+      const result = await useService.createChat(userId);
       res.send({ result });
     } catch (error) {
       console.log(error);
@@ -75,8 +75,8 @@ export class useRoutes {
 
   public async addMessage(req: Request, res: Response) {
     try {
-      const { message, chatId } = req.body;
-      const result = await useService.addMessage({ message, chatId });
+      const { message, chatId, userId } = req.body;
+      const result = await useService.addMessage({ message, chatId, userId });
       res.send({ result });
     } catch (error) {
       console.log(error);

@@ -19,6 +19,8 @@ model Message{
 id String @id @unique @default(uuid())
 message String?
 chat Chats? @relation(fields: [chatId],references: [id], onDelete: Cascade,onUpdate: Cascade)
+user User? @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+userId String?
 chatId String?
 @@map("message")
 }
@@ -37,6 +39,7 @@ model Chats {
 model User {
   id String @id @unique @default(uuid())
   chats Chats[]
+  messages Message[]
   email String @unique
   password String 
   name String
