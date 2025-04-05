@@ -62,7 +62,7 @@ export class useRoutes {
     }
   }
 
-  public async createMessage(req: Request, res: Response) {
+  public async createChat(req: Request, res: Response) {
     try {
       const { userId } = req.body;
       const result = await useService.createChat(userId);
