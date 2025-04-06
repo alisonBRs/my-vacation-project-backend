@@ -39,7 +39,7 @@ model Chats {
 model User {
   id String @id @unique @default(uuid())
   chats Chats[]
-  messages Message[]
+  message Message[]
   email String @unique
   password String 
   name String

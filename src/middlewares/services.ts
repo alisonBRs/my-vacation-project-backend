@@ -59,7 +59,7 @@ class UseService {
   public async getProfile({ userId }: { userId: string }) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { chats: true, messages: true },
+      include: { chats: true, message: true },
     });
 
     if (!user) {
@@ -74,7 +74,7 @@ class UseService {
   public async createChat(userId: string) {
     const data = await prisma.chats.create({
       data: {
-        openned: false,
+        openned: true,
         userId,
       },
       include: { message: true },
@@ -101,7 +101,7 @@ class UseService {
     if (!chat) {
       throw new Error("chat not found");
     }
-    console.log("data", data);
+
     await prisma.message.create({
       data,
     });
