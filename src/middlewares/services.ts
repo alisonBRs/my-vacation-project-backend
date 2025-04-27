@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { messageType } from "../interfaces/message-type";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { create } from "ts-node";
 const prisma = new PrismaClient();
 class UseService {
   public async createUser({
@@ -71,9 +72,21 @@ class UseService {
     return userData;
   }
 
-  public async createChat(userId: string) {
+  public async createChat(userId: string, email: string) {
+    const emailExists = await prisma.user.findUnique({ where: { email } });
+
+    if (!emailExists) {
+      return {
+        error: true,
+        description: "Usuário nao encontrado",
+      };
+    }
+
     const data = await prisma.chats.create({
       data: {
+        userRelation: {
+          create: { user: { connect: { email } } },
+        },
         openned: true,
         userId,
       },

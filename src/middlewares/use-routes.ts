@@ -64,8 +64,8 @@ export class useRoutes {
 
   public async createChat(req: Request, res: Response) {
     try {
-      const { userId } = req.body;
-      const result = await useService.createChat(userId);
+      const { userId, email } = req.body;
+      const result = await useService.createChat(userId, email);
       res.send({ result });
     } catch (error) {
       console.log(error);
