@@ -76,10 +76,13 @@ class UseService {
     const emailExists = await prisma.user.findUnique({ where: { email } });
 
     if (!emailExists) {
-      return {
-        error: true,
-        description: "Usuário nao encontrado",
-      };
+      throw new Error("Usuário nao encontrado");
+    }
+
+    if (emailExists.id === userId) {
+      throw new Error(
+        "Seu email nao pode ser utilzado para criar um chat no seu perfil!"
+      );
     }
 
     const data = await prisma.chats.create({

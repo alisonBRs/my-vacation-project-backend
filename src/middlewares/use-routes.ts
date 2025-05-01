@@ -65,11 +65,12 @@ export class useRoutes {
   public async createChat(req: Request, res: Response) {
     try {
       const { userId, email } = req.body;
+
       const result = await useService.createChat(userId, email);
       res.send({ result });
     } catch (error) {
       console.log(error);
-      res.status(400).send(error);
+      res.status(400).send({ message: error.message });
     }
   }
 
