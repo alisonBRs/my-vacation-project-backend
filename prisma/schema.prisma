@@ -32,7 +32,8 @@ model Chats {
   message Message[]  
   openned Boolean?
   phone String?
-  name String?   
+  name String?  
+  receiverUserId String 
   userRelation RelationChats[] 
   @@map("chats")
 }

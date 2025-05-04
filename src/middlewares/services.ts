@@ -63,8 +63,14 @@ class UseService {
       include: { chats: true, message: true },
     });
 
+    const connectedChats = await prisma.chats.findMany({
+      where: {
+        receiverUserId: userId,
+      },
+    });
+
     if (!user) {
-      throw new Error("User not found.");
+      throw new Error("Usuário não encontrado.");
     }
 
     const { password, ...userData } = user;
@@ -73,7 +79,39 @@ class UseService {
   }
 
   public async createChat(userId: string, email: string) {
-    const emailExists = await prisma.user.findUnique({ where: { email } });
+    const emailExists = await prisma.user.findUnique({
+      where: { email },
+      include: { chats: true },
+    });
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { chats: true },
+    });
+
+    const chatAlreadyExist = user?.chats.find(
+      (chat) => chat.receiverUserId === emailExists?.id
+    );
+
+    const receiveHasConnected = emailExists?.chats.find(
+      (chat) => chat.receiverUserId === userId
+    );
+
+    receiveHasConnected;
+
+    if (chatAlreadyExist) {
+      throw new Error("Chat já existe");
+    }
+
+    if (receiveHasConnected) {
+      const data = await prisma.chats.create({
+        data: {
+          openned: true,
+          userId,
+          receiverUserId: emailExists?.id ?? "",
+        },
+      });
+      return data;
+    }
 
     if (!emailExists) {
       throw new Error("Usuário nao encontrado");
@@ -85,15 +123,22 @@ class UseService {
       );
     }
 
-    const data = await prisma.chats.create({
-      data: {
-        userRelation: {
-          create: { user: { connect: { email } } },
-        },
+    const query = [
+      {
         openned: true,
         userId,
+        receiverUserId: emailExists.id,
       },
-      include: { message: true },
+
+      {
+        openned: true,
+        userId: emailExists.id,
+        receiverUserId: userId,
+      },
+    ];
+
+    const data = await prisma.chats.createMany({
+      data: query,
     });
 
     return data;
