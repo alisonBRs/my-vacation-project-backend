@@ -18,6 +18,7 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
       error: true,
       message: err?.message,
       jwtExpired: !!err?.message?.includes("jwt expired"),
+      unauthorized: !!err?.message?.includes("jwt must be provided"),
       customMessage: "Usuário não autorizado!",
     });
   }
