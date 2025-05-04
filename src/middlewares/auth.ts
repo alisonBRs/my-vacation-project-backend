@@ -12,11 +12,12 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
 
     req.body.userId = validToken.id;
     next();
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    console.log(err);
     res.status(401).send({
       error: true,
-      message: e.toString(),
+      message: err?.message,
+      jwtExpired: !!err?.message?.includes("jwt expired"),
       customMessage: "Usuário não autorizado!",
     });
   }
