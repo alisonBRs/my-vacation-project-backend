@@ -60,7 +60,11 @@ class UseService {
   public async getProfile({ userId }: { userId: string }) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { chats: true, message: true },
+      include: {
+        chats: true,
+        message: true,
+        relationChats: { include: { chat: { include: { message: true } } } },
+      },
     });
 
     const connectedChats = await prisma.chats.findMany({
@@ -90,11 +94,11 @@ class UseService {
 
     const chatAlreadyExist = user?.chats.find(
       (chat) => chat.receiverUserId === emailExists?.id
-    );
+    ) as any;
 
     const receiveHasConnected = emailExists?.chats.find(
       (chat) => chat.receiverUserId === userId
-    );
+    ) as any;
 
     receiveHasConnected;
 
@@ -139,6 +143,28 @@ class UseService {
 
     const data = await prisma.chats.createMany({
       data: query,
+    });
+
+    const updatedChatSender = await prisma.chats.findFirst({
+      where: { userId, receiverUserId: emailExists.id },
+    });
+    const updatedChatReceiver = await prisma.chats.findFirst({
+      where: { userId: emailExists.id, receiverUserId: userId },
+    });
+
+    await prisma.relationChats.createMany({
+      data: [
+        {
+          chatId: updatedChatReceiver?.id,
+          userId,
+          receiverChatId: updatedChatSender?.id,
+        },
+        {
+          chatId: updatedChatSender?.id,
+          userId: emailExists.id,
+          receiverChatId: updatedChatReceiver?.id,
+        },
+      ],
     });
 
     return data;

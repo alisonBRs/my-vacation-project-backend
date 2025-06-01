@@ -53,6 +53,7 @@ model RelationChats{
   id String @id @unique @default(uuid())
   chat Chats? @relation(fields: [chatId],references: [id], onDelete: Cascade,onUpdate: Cascade)
   user User? @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  receiverChatId String?
   userId String?
   chatId String?
   @@map("relation_chats")
