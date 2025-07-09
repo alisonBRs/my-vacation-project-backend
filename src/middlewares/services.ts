@@ -31,6 +31,7 @@ class UseService {
         email,
         password: cryptoPassword,
         name,
+        createdAt: new Date(),
       },
     });
   }
@@ -64,12 +65,6 @@ class UseService {
         chats: true,
         message: true,
         relationChats: { include: { chat: { include: { message: true } } } },
-      },
-    });
-
-    const connectedChats = await prisma.chats.findMany({
-      where: {
-        receiverUserId: userId,
       },
     });
 
@@ -112,6 +107,7 @@ class UseService {
           openned: true,
           userId,
           receiverUserId: emailExists?.id ?? "",
+          createdAt: new Date(),
         },
       });
       return data;
@@ -132,12 +128,14 @@ class UseService {
         openned: true,
         userId,
         receiverUserId: emailExists.id,
+        createdAt: new Date(),
       },
 
       {
         openned: true,
         userId: emailExists.id,
         receiverUserId: userId,
+        createdAt: new Date(),
       },
     ];
 

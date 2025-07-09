@@ -48,6 +48,7 @@ export class useRoutes {
         error: true,
         message: e.toString(),
         customMessage: "Usuário não autorizado.",
+        unauthorized: true,
       });
     }
   }
@@ -77,7 +78,12 @@ export class useRoutes {
   public async addMessage(req: Request, res: Response) {
     try {
       const { message, chatId, userId } = req.body;
-      const result = await useService.addMessage({ message, chatId, userId });
+      const result = await useService.addMessage({
+        message,
+        chatId,
+        userId,
+        createdAt: new Date(),
+      });
       res.send({ result });
     } catch (error) {
       console.log(error);

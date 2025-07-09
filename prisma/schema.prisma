@@ -22,6 +22,7 @@ chat Chats? @relation(fields: [chatId],references: [id], onDelete: Cascade,onUpd
 user User? @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
 userId String?
 chatId String?
+createdAt DateTime
 @@map("message")
 }
 
@@ -35,6 +36,7 @@ model Chats {
   name String?  
   receiverUserId String 
   userRelation RelationChats[] 
+  createdAt DateTime
   @@map("chats")
 }
 
@@ -47,6 +49,7 @@ model User {
   name String
   phone String?
   relationChats RelationChats[]
+  createdAt DateTime
 }
 
 model RelationChats{
